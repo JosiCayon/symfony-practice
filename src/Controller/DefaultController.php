@@ -7,6 +7,7 @@ namespace App\Controller;
 
 // Esto lo importa automáticamente al declarar Response en la clase
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 // Hay que importar este Route
@@ -15,6 +16,15 @@ use Symfony\Component\Routing\Annotation\Route;
 // La clase se debe llamar igual que el fichero
 // AbstractController pone a nuestra disposición varias funciones
 class DefaultController extends AbstractController {
+
+
+    const PEOPLE = [
+        ['name' => 'Carlos', 'email' => 'carlos@correo.com', 'age' => 30, 'city' => 'Benalmádena'],
+        ['name' => 'Carmen', 'email' => 'carmen@correo.com', 'age' => 25, 'city' => 'Fuengirola'],
+        ['name' => 'Carmelo', 'email' => 'carmelo@correo.com', 'age' => 35, 'city' => 'Torremolinos'],
+        ['name' => 'Carolina', 'email' => 'carolina@correo.com', 'age' => 38, 'city' => 'Málaga'],        
+    ];
+    
 
     /**
      * @Route("/default", name="default_index")
@@ -38,7 +48,23 @@ class DefaultController extends AbstractController {
         //Los parámetros van como un array asociativo
         return $this->render('default/index.html.twig', [
             'nombre'=>$name
-        ]);
+        ]);        
+    }
+
+    /** 
+    * @Route("/saludar", name="default_saludar")
+    */
+    public function saludar(): Response 
+    {
+        return new Response('<html><body>hola</body></html>');
+    }
+
+
+    /**
+     * @Route("/json", name="default_index_json")
+     */
+    public function indexJson(): JsonResponse {
+        return new JsonResponse(self::PEOPLE);
     }
 
 }
