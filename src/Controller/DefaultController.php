@@ -59,7 +59,19 @@ class DefaultController extends AbstractController {
 
 
     /**
-     * @Route("/json", name="default_index_json")
+     * @Route(
+        * "/default.{_format}", 
+        * name="default_index_json",
+        * requirements = {
+        *      "_format": "json"
+        * }
+     * )
+     * 
+     * El comando:
+     * symfony console router:match /default.json
+     * buscará la acción coincidente con la ruta indicada
+     * y mostrará la información asociada.
+     * 
      */
     public function indexJson(): JsonResponse {
         return new JsonResponse(self::PEOPLE);
