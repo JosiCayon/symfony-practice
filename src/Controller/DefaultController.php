@@ -42,12 +42,10 @@ class DefaultController extends AbstractController {
         // que devuelve el contenido declarado en una plantillas de Twig.
         // https://twig.symfony.com/doc/3.x/templates.html
 
-        $name = 'Luis';
-
         //Lo primero es la vista y lo segundo los parámetros.
         //Los parámetros van como un array asociativo
         return $this->render('default/index.html.twig', [
-            'nombre'=>$name
+            'people'=>self::PEOPLE
         ]);        
     }
 
@@ -65,6 +63,7 @@ class DefaultController extends AbstractController {
      */
     public function indexJson(): JsonResponse {
         return new JsonResponse(self::PEOPLE);
+        //return this->json(self::PEOPLE); Esto es una sintaxis alternativa
     }
 
 }
