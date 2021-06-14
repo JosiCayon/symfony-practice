@@ -8,6 +8,7 @@ namespace App\Controller;
 // Esto lo importa automáticamente al declarar Response en la clase
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 // Hay que importar este Route
@@ -35,8 +36,11 @@ class DefaultController extends AbstractController {
     */
 
     // Debe tener un método público que siempre debe devolver algo
-    public function index(): Response 
+    public function index(Request $solicitud): Response 
     {
+        echo '<pre>query: ida:'; var_dump($solicitud->query->get('ida', '100')); echo '</pre>';
+        echo '<pre>query: id:'; var_dump($solicitud->query->get('id', '100')); echo '</pre>';
+
         // Por defecto debe ser un objeto de la clase: Response (Symfony\Component\HttpFoundation)
         // render() es un método hereado de AbstractController
         // que devuelve el contenido declarado en una plantillas de Twig.
@@ -78,4 +82,20 @@ class DefaultController extends AbstractController {
         //return this->json(self::PEOPLE); Esto es una sintaxis alternativa
     }
 
+
+    /** 
+    * @Route(
+    *    "/default/{id}", 
+    *    name="default_show",
+    *    requirements = {
+    *        "id": "[0-3]"
+    *    }
+    *  )
+    */
+    public function show(int $id): Response {
+        return $this->render('default/show.html.twig', [
+            'id' => $id,
+            'person' => self::PEOPLE[$id]
+            ]);
+    }
 }

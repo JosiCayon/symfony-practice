@@ -16,14 +16,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for person in people %}
             <tr>
                 <td>{{person.name}}</td>
-                <td><a href="{{ path('default_show', { id: loop.index0}) }}">{{person.email}}</a></td>
+                <td><a href="{{ path('default_show', {id: id}) }}">{{person.email}}</a></td>
                 <td>{{person.age}}</td>
                 <td>{{person.city}}</td>
             </tr>
-            {% endfor %}
         </tbody>
     </table>
 {% endblock %}
