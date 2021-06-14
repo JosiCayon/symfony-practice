@@ -98,4 +98,21 @@ class DefaultController extends AbstractController {
             'person' => self::PEOPLE[$id]
             ]);
     }
+
+
+    /**
+     * @Route(
+     *      "/redirect-to-home",
+     *      name = "default_redirect_to_home"
+     *  )
+     */
+    public function redirectToHome(): Response {
+        // Redirigir a la URL /default
+        return $this->redirect('/default');
+
+        // Redirigir a una ruta utilizando su nombre
+        // return $this->redirectToRoute('default_show', ['id' => 1]);
+
+       
+    }
 }
