@@ -100,6 +100,21 @@ class DefaultController extends AbstractController {
     }
 
 
+    /** 
+    * @Route(
+    *    "/default/{id}.{_format}", 
+    *    name="default_show_json",
+    *    requirements = {
+    *        "_format": "json"
+    *    }
+    *  )
+    */
+    public function showJson(int $id): JsonResponse {
+        $person = self::PEOPLE[$id];
+        return new JsonResponse($person);
+    }
+
+
     /**
      * @Route(
      *      "/redirect-to-home",
