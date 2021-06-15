@@ -79,7 +79,7 @@ class DefaultController extends AbstractController {
      */
     public function indexJson(): JsonResponse {
         return new JsonResponse(self::PEOPLE);
-        //return this->json(self::PEOPLE); Esto es una sintaxis alternativa
+        //return $this->json(self::PEOPLE); Esto es una sintaxis alternativa
     }
 
 
@@ -105,6 +105,7 @@ class DefaultController extends AbstractController {
     *    "/default/{id}.{_format}", 
     *    name="default_show_json",
     *    requirements = {
+    *        "id": "[0-3]",
     *        "_format": "json"
     *    }
     *  )
@@ -114,6 +115,18 @@ class DefaultController extends AbstractController {
         return new JsonResponse($person);
     }
 
+    /**
+    * @Route(
+    * "/default.{_format}", 
+    * name="default_show_json_request",
+    * requirements = {
+    *      "_format": "json"
+    * })
+    */
+    public function indexJsonRequest(Request $request): JsonResponse {
+        $data = $request->query->has('id') ? self::PEOPLE[$request->query->get('id')] : self::PEOPLE;
+        return $this->json($data);
+    }
 
     /**
      * @Route(
