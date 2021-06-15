@@ -37,6 +37,11 @@ class Employee
      */
     private $email;
 
+    /**
+     * @ORM\Column(type="string", length=16)
+     */
+    private $phone;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +91,18 @@ class Employee
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
 
         return $this;
     }
