@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Employee;
+use App\Repository\EmployeeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,12 +21,15 @@ class ApiEmployeesController extends AbstractController
     *   methods={"GET"}
     *)
     */
-    public function index(): Response
+    public function index(Request $request, EmployeeRepository $employeeRepository): Response
     {
-        return $this->json([
-            'method' => 'CGET',
-            'description' => 'Devuelve el listado del recurso empleados'
-        ]);
+        if($request->query->has('term')) {
+            $people = $employeeRepository->findByTerm($request->query->get('term'));
+
+            return $this->json($people);
+        }
+
+        return $this->json($employeeRepository->findAll());
     }
 
     /**
@@ -36,12 +42,9 @@ class ApiEmployeesController extends AbstractController
     *    }
     *)
     */
-    public function show(int $id): Response
+    public function show(Employee $employee): Response
     {
-        return $this->json([
-            'method' => 'GET',
-            'description' => 'Devuelve un empleado con id: '.$id.'.'
-        ]);
+        return $this->json($employee);
     }
 
     /**
