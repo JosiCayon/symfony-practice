@@ -25,9 +25,9 @@
                 <td>{{person.city}}</td>
                 <td>
                     <ul>
-                        <li><a href="{{ path('default_show', { id: loop.index0}) }}">Ver en formato HTTP</a>
-                        <li><a href="{{ path('default_show_json', {id: loop.index0, _format: 'json'}) }}">Ver en formato JSON</a>
-                        <li><a href="{{ path('default_show_json_request', {id: loop.index0, _format: 'json'}) }}">Ver en formato JSON con request</a>
+                        <li><a href="{{ path('default_show', { id: person.id}) }}">Ver en formato HTTP</a>
+                        <li><a href="{{ path('default_show_json', {id: person.id, _format: 'json'}) }}">Ver en formato JSON</a>
+                        <li><a href="{{ path('default_show_json_request', {id: person.id, _format: 'json'}) }}">Ver en formato JSON con request</a>
 
                     </ul>
                 </td>

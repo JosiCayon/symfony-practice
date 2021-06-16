@@ -7,12 +7,11 @@ namespace App\Controller;
 
 // Esto lo importa automáticamente al declarar Response en la clase
 
-use App\Entity\Employee;
+use App\Repository\EmployeeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 // Hay que importar este Route
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -30,7 +29,7 @@ class DefaultController extends AbstractController {
     */
 
     // Debe tener un método público que siempre debe devolver algo
-    public function index(Request $solicitud): Response 
+    public function index(EmployeeRepository $employeeRepository): Response 
     {
         // Por defecto debe ser un objeto de la clase: Response (Symfony\Component\HttpFoundation)
         // render() es un método hereado de AbstractController
@@ -40,11 +39,14 @@ class DefaultController extends AbstractController {
         //Lo primero es la vista y lo segundo los parámetros.
         //Los parámetros van como un array asociativo
         
-        $orm = $this->getDoctrine();
-        $repo = $orm->getRepository(Employee::class);
-        $people = $repo->findAll();
+        // Metodo 1: Accediendo al repositorio a través de AbstractController
+        // $people = $this->getDoctrine()->getRepository(Employee::class)->findAll();
+        
+        // Método 2: Accediendo al parámetro indicando el tipo (type hint).
+        $people = $employeeRepository->findAll();
+
         return $this->render('default/index.html.twig', [
-            'people'=>$people
+        'people'=>$people
         ]);        
     }
 
@@ -72,9 +74,9 @@ class DefaultController extends AbstractController {
      * y mostrará la información asociada.
      * 
      */
-    public function indexJson(): JsonResponse {
-        return new JsonResponse([]);
-        //return $this->json([]); Esto es una sintaxis alternativa
+    public function indexJson(EmployeeRepository $employeeRepository): JsonResponse {
+        $people = $employeeRepository->findAll();
+        return $this->json($people);
     }
 
 
@@ -83,16 +85,30 @@ class DefaultController extends AbstractController {
     *    "/default/{id}", 
     *    name="default_show",
     *    requirements = {
-    *        "id": "[0-3]"
+    *        "id": "\d+"
     *    }
     *  )
     */
-    public function show(int $id): Response {
+    public function show(int $id, EmployeeRepository $employeeRepository): Response {
+        $data = $employeeRepository->find($id);
         return $this->render('default/show.html.twig', [
             'id' => $id,
-            'person' => [][$id]
+            'person' => $data
             ]);
     }
+
+    // La técinca ParamConverte inyecta directamente,
+    // un objeto del tipo indicado como parámetro
+    // intentando hacer un match del parámetro de la ruta
+    // con alguna de las propiedades del objeto requerido.
+    //Esto es similar a lo anterior
+    /*     public function show(Employee $employee): Response {
+        return $this->render('default/show.html.twig', [
+            'person' => $employee
+        ]);
+    } */
+
+
 
 
     /** 
@@ -100,14 +116,14 @@ class DefaultController extends AbstractController {
     *    "/default/{id}.{_format}", 
     *    name="default_show_json",
     *    requirements = {
-    *        "id": "[0-3]",
+    *        "id": "\d+",
     *        "_format": "json"
     *    }
     *  )
     */
-    public function showJson(int $id): JsonResponse {
-        $person = [][$id];
-        return new JsonResponse($person);
+    public function showJson(int $id, EmployeeRepository $employeeRepository): JsonResponse {
+        $data = $employeeRepository->find($id);
+        return $this->json($data);
     }
 
     /**
@@ -118,8 +134,11 @@ class DefaultController extends AbstractController {
     *      "_format": "json"
     * })
     */
-    public function indexJsonRequest(Request $request): JsonResponse {
-        $data = $request->query->has('id') ? [][$request->query->get('id')] : [];
+    public function indexJsonRequest(Request $request, EmployeeRepository $employeeRepository): JsonResponse {
+        $data = $request->query->has('id') ? 
+            $employeeRepository->find($request->query->get('id')) :
+            $employeeRepository->findAll();
+
         return $this->json($data);
     }
 
