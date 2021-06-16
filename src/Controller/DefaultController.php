@@ -29,8 +29,19 @@ class DefaultController extends AbstractController {
     */
 
     // Debe tener un método público que siempre debe devolver algo
-    public function index(EmployeeRepository $employeeRepository): Response 
+    public function index(Request $request, EmployeeRepository $employeeRepository): Response 
     {
+
+        if($request->query->has('term')) {
+            $people = $employeeRepository->findByTerm($request->query->get('term'));
+            
+            return $this->render('default/index.html.twig', [
+                'people'=>$people
+                ]);    
+        }
+
+
+
         // Por defecto debe ser un objeto de la clase: Response (Symfony\Component\HttpFoundation)
         // render() es un método hereado de AbstractController
         // que devuelve el contenido declarado en una plantillas de Twig.
@@ -43,7 +54,11 @@ class DefaultController extends AbstractController {
         // $people = $this->getDoctrine()->getRepository(Employee::class)->findAll();
         
         // Método 2: Accediendo al parámetro indicando el tipo (type hint).
-        $people = $employeeRepository->findAll();
+        $order = [];
+        if($request->query->has('orderBy')) {
+            $order[$request->query->get('orderBy')] = $request->query->get('orderDir', 'ASC');
+        }
+        $people = $employeeRepository->findBy([], $order);
 
         return $this->render('default/index.html.twig', [
         'people'=>$people

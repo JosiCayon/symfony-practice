@@ -14,9 +14,53 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EmployeeRepository extends ServiceEntityRepository
 {
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Employee::class);
+    }
+
+
+    public function findByTermStrict(string $term)
+    {
+        $queryBuilder = $this->createQueryBuilder('e'); /* Se suele poner la inital del componente como alias */
+        // SELECT * FROM employees;
+
+        $queryBuilder->where('e.name = :term');
+        // SELECT * FROM employees e WHERE e.name = :term;
+        
+        $queryBuilder->orWhere('e.email = :term');
+        // SELECT * FROM employees e WHERE e.name = :term OR e.email = :term;
+
+        $queryBuilder->orWhere('e.city = :term');
+        // SELECT * FROM employees e WHERE e.name = :term OR e.email = :term OR e.city = :term;
+
+        $queryBuilder->setParameter('term', $term);
+        $queryBuilder->orderBy('e.id', 'ASC');
+        // Si $term = 'hola'
+        // SELECT * FROM employees e WHERE e.name = 'hola' OR e.email = 'hola' OR e.city = 'hola' ORDER BY e.id ASC;
+    
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findByTerm(string $term)
+    {
+        $queryBuilder = $this->createQueryBuilder('e');
+
+        $queryBuilder->where(
+            $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like('e.name', ':term'),
+                $queryBuilder->expr()->like('e.email', ':term'),
+                $queryBuilder->expr()->like('e.city', ':term')
+            )
+        )
+
+        ->setParameter('term', '%'.$term.'%')
+        ->orderBy('e.id', 'ASC');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     // /**
