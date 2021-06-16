@@ -6,6 +6,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 // Esto lo importa automáticamente al declarar Response en la clase
+
+use App\Entity\Employee;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,15 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 // La clase se debe llamar igual que el fichero
 // AbstractController pone a nuestra disposición varias funciones
 class DefaultController extends AbstractController {
-
-
-    const PEOPLE = [
-        ['name' => 'Carlos', 'email' => 'carlos@correo.com', 'age' => 30, 'city' => 'Benalmádena'],
-        ['name' => 'Carmen', 'email' => 'carmen@correo.com', 'age' => 25, 'city' => 'Fuengirola'],
-        ['name' => 'Carmelo', 'email' => 'carmelo@correo.com', 'age' => 35, 'city' => 'Torremolinos'],
-        ['name' => 'Carolina', 'email' => 'carolina@correo.com', 'age' => 38, 'city' => 'Málaga'],        
-    ];
-    
+ 
 
     /**
      * @Route("/default", name="default_index")
@@ -38,9 +32,6 @@ class DefaultController extends AbstractController {
     // Debe tener un método público que siempre debe devolver algo
     public function index(Request $solicitud): Response 
     {
-        echo '<pre>query: ida:'; var_dump($solicitud->query->get('ida', '100')); echo '</pre>';
-        echo '<pre>query: id:'; var_dump($solicitud->query->get('id', '100')); echo '</pre>';
-
         // Por defecto debe ser un objeto de la clase: Response (Symfony\Component\HttpFoundation)
         // render() es un método hereado de AbstractController
         // que devuelve el contenido declarado en una plantillas de Twig.
@@ -48,8 +39,12 @@ class DefaultController extends AbstractController {
 
         //Lo primero es la vista y lo segundo los parámetros.
         //Los parámetros van como un array asociativo
+        
+        $orm = $this->getDoctrine();
+        $repo = $orm->getRepository(Employee::class);
+        $people = $repo->findAll();
         return $this->render('default/index.html.twig', [
-            'people'=>self::PEOPLE
+            'people'=>$people
         ]);        
     }
 
@@ -78,8 +73,8 @@ class DefaultController extends AbstractController {
      * 
      */
     public function indexJson(): JsonResponse {
-        return new JsonResponse(self::PEOPLE);
-        //return $this->json(self::PEOPLE); Esto es una sintaxis alternativa
+        return new JsonResponse([]);
+        //return $this->json([]); Esto es una sintaxis alternativa
     }
 
 
@@ -95,7 +90,7 @@ class DefaultController extends AbstractController {
     public function show(int $id): Response {
         return $this->render('default/show.html.twig', [
             'id' => $id,
-            'person' => self::PEOPLE[$id]
+            'person' => [][$id]
             ]);
     }
 
@@ -111,7 +106,7 @@ class DefaultController extends AbstractController {
     *  )
     */
     public function showJson(int $id): JsonResponse {
-        $person = self::PEOPLE[$id];
+        $person = [][$id];
         return new JsonResponse($person);
     }
 
@@ -124,7 +119,7 @@ class DefaultController extends AbstractController {
     * })
     */
     public function indexJsonRequest(Request $request): JsonResponse {
-        $data = $request->query->has('id') ? self::PEOPLE[$request->query->get('id')] : self::PEOPLE;
+        $data = $request->query->has('id') ? [][$request->query->get('id')] : [];
         return $this->json($data);
     }
 
