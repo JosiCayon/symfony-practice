@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
- * @UniqueEntity("email")
+ * @UniqueEntity("email", message="El email ya está en uso")
  */
 class Employee
 {
@@ -60,6 +60,12 @@ class Employee
      * @ORM\Column(type="string", length=16)
      */
     private $phone;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Department::class, inversedBy="employees")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $department;
 
     public function getId(): ?int
     {
@@ -122,6 +128,18 @@ class Employee
     public function setPhone(string $phone): self
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getDepartment(): ?Department
+    {
+        return $this->department;
+    }
+
+    public function setDepartment(?Department $department): self
+    {
+        $this->department = $department;
 
         return $this;
     }
