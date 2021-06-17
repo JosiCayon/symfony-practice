@@ -28,7 +28,6 @@ class ApiEmployeesController extends AbstractController
 
             return $this->json($people);
         }
-
         return $this->json($employeeRepository->findAll());
     }
 
@@ -56,6 +55,16 @@ class ApiEmployeesController extends AbstractController
     */
     public function add(): Response
     {
+        $employee = new Employee();
+        $employee->setName('Rocío');
+        $employee->setEmail('correo@paraseguirviva.com');
+        $employee->setAge(35);
+        $employee->setCity('Chiclana');
+        $employee->setPhone('698765432');
+
+
+        dump($employee);
+
         return $this->json([
             'method' => 'POST',
             'description' => 'Crea un recurso empleado'
