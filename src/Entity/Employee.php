@@ -4,11 +4,18 @@ namespace App\Entity;
 
 use App\Repository\EmployeeRepository;
 use Doctrine\ORM\Mapping as ORM;
+// Esto es para añadir una restricción de que los datos sean únicos.
+// Se añaden al nivel de clase
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity; 
+
+// Para las restricciones generales.
+// Se añaden a nivel de propiedad
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
  * @ORM\Entity(repositoryClass=EmployeeRepository::class)
+ * @UniqueEntity("email")
  */
 class Employee
 {
@@ -42,7 +49,7 @@ class Employee
     private $city;
 
     /**
-     * @ORM\Column(type="string", length=128)     
+     * @ORM\Column(type="string", length=128, unique=true)     
      * @Assert\Email(
      *     message = "'{{ value }}' no es un email válido."
      * )
