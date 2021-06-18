@@ -7,7 +7,9 @@ namespace App\Controller;
 
 // Esto lo importa automáticamente al declarar Response en la clase
 
+use App\Entity\Employee;
 use App\Repository\EmployeeRepository;
+use App\Service\EmployeeNormalize;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -89,32 +91,15 @@ class DefaultController extends AbstractController {
      * y mostrará la información asociada.
      * 
      */
-    public function indexJson(Request $request, EmployeeRepository $employeeRepository): JsonResponse {
+    public function indexJson(Request $request, EmployeeRepository $employeeRepository, EmployeeNormalize $employeeNormalize): JsonResponse {
         $result = $request->query->has('id') ?
             $employeeRepository->find($request->query->get('id')) :
             $employeeRepository->findAll();
+
         $data = [];
 
         foreach ($result as $employee) {
-            $projects = [];
-
-            foreach($employee->getProjects() as $project) {
-                array_push($projects, [
-                    'id' => $project->getId(),    
-                    'name' => $project->getName(),    
-                ]);
-            }
-
-            array_push($data, [
-                'name' => $employee->getName(),
-                'email' => $employee->getEmail(),
-                'city' => $employee->getCity(),
-                'department' => [
-                    'id' => $employee->getDepartment()->getId(),
-                    'name' => $employee->getDepartment()->getName(),
-                ],
-                'projects' => $projects
-            ]);
+            array_push($data, $employeeNormalize->EmployeeNormalize($employee));
         }
       
         return $this->json($data);
@@ -149,6 +134,9 @@ class DefaultController extends AbstractController {
         ]);
     } */
 
+
+
+
     /** 
     * @Route(
     *    "/default/{id}.{_format}", 
@@ -159,11 +147,15 @@ class DefaultController extends AbstractController {
     *    }
     *  )
     */
-    public function showJson(int $id, EmployeeRepository $employeeRepository): JsonResponse {
-        $data = $employeeRepository->find($id);
+    public function showJson(int $id, EmployeeRepository $employeeRepository, EmployeeNormalize $employeeNormalize): JsonResponse {
+        $result = $employeeRepository->find($id);
+
+
+        $data = $employeeNormalize->EmployeeNormalize($result);
+
+
         return $this->json($data);
     }
-
 
     /**
      * @Route(
