@@ -89,9 +89,35 @@ class DefaultController extends AbstractController {
      * y mostrará la información asociada.
      * 
      */
-    public function indexJson(EmployeeRepository $employeeRepository): JsonResponse {
-        $people = $employeeRepository->findAll();
-        return $this->json($people);
+    public function indexJson(Request $request, EmployeeRepository $employeeRepository): JsonResponse {
+        $result = $request->query->has('id') ?
+            $employeeRepository->find($request->query->get('id')) :
+            $employeeRepository->findAll();
+        $data = [];
+
+        foreach ($result as $employee) {
+            $projects = [];
+
+            foreach($employee->getProjects() as $project) {
+                array_push($projects, [
+                    'id' => $project->getId(),    
+                    'name' => $project->getName(),    
+                ]);
+            }
+
+            array_push($data, [
+                'name' => $employee->getName(),
+                'email' => $employee->getEmail(),
+                'city' => $employee->getCity(),
+                'department' => [
+                    'id' => $employee->getDepartment()->getId(),
+                    'name' => $employee->getDepartment()->getName(),
+                ],
+                'projects' => $projects
+            ]);
+        }
+      
+        return $this->json($data);
     }
 
 
@@ -123,9 +149,6 @@ class DefaultController extends AbstractController {
         ]);
     } */
 
-
-
-
     /** 
     * @Route(
     *    "/default/{id}.{_format}", 
@@ -141,21 +164,6 @@ class DefaultController extends AbstractController {
         return $this->json($data);
     }
 
-    /**
-    * @Route(
-    * "/default.{_format}", 
-    * name="default_show_json_request",
-    * requirements = {
-    *      "_format": "json"
-    * })
-    */
-    public function indexJsonRequest(Request $request, EmployeeRepository $employeeRepository): JsonResponse {
-        $data = $request->query->has('id') ? 
-            $employeeRepository->find($request->query->get('id')) :
-            $employeeRepository->findAll();
-
-        return $this->json($data);
-    }
 
     /**
      * @Route(

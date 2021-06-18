@@ -19,7 +19,8 @@
                 <th>Email <a href="{{ path('default_index', { orderBy: 'email', orderDir: 'DESC'}) }}">⬆</a>&nbsp;<a href="{{ path('default_index', { orderBy: 'email', orderDir: 'ASC'}) }}">⬇</a></th>              
                 <th>Edad<a href="{{ path('default_index', { orderBy: 'age', orderDir: 'DESC'}) }}">⬆</a>&nbsp;<a href="{{ path('default_index', { orderBy: 'age', orderDir: 'ASC'}) }}">⬇</a></th>
                 <th>Localidad<a href="{{ path('default_index', { orderBy: 'city', orderDir: 'DESC'}) }}">⬆</a>&nbsp;<a href="{{ path('default_index', { orderBy: 'city', orderDir: 'ASC'}) }}">⬇</a></th>
-                <th>Departamento</th>  
+                <th>Departamento</th>
+                <th>Proyectos</th>  
                 <th>Acciones</th>          
 
             </tr>
@@ -32,12 +33,11 @@
                 <td>{{person.age}}</td>
                 <td>{{person.city}}</td>
                 <td>{{person.department}}</td>
+                <td>{{person.projects|join(', ')}}</td>
                 <td>
                     <ul>
                         <li><a href="{{ path('default_show', { id: person.id}) }}">Ver en formato HTTP</a>
                         <li><a href="{{ path('default_show_json', {id: person.id, _format: 'json'}) }}">Ver en formato JSON</a>
-                        <li><a href="{{ path('default_show_json_request', {id: person.id, _format: 'json'}) }}">Ver en formato JSON con request</a>
-
                     </ul>
                 </td>
             </tr>

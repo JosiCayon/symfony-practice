@@ -13,7 +13,9 @@
                 <th>Email</th>
                 <th>Edad</th>
                 <th>Localidad</th> 
-                <th>Departamento</th>            
+                <th>Departamento</th>
+                <th>Projects</th>            
+
             </tr>
         </thead>
         <tbody>
@@ -23,6 +25,8 @@
                 <td>{{person.age}}</td>
                 <td>{{person.city}}</td>
                 <td>{{person.department}}</td>
+                <td>{{person.projects|join(', ')}}</td>
+
             </tr>
         </tbody>
     </table>
