@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Employee;
+use App\Repository\DepartmentRepository;
 use App\Repository\EmployeeRepository;
 use App\Service\EmployeeNormalize;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,18 +67,29 @@ class ApiEmployeesController extends AbstractController
     *    methods={"POST"}
     *)
     */
-    public function add(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+    public function add(
+        Request $request, 
+        EntityManagerInterface $entityManager, 
+        ValidatorInterface $validator, 
+        DepartmentRepository $departmentRepository,
+        EmployeeNormalize $employeeNormalize
+    ): Response
     {
 
         $data = $request->request;
+
+        $department = $departmentRepository->find($data->get('department_id'));
         
         //Creamos un nuevo objeto para enviar en la solicitud
         $employee = new Employee();
+
         $employee->setName($data->get('name'));
         $employee->setEmail($data->get('email'));
         $employee->setAge($data->get('age'));
         $employee->setCity($data->get('city'));
         $employee->setPhone($data->get('phone'));
+        $employee->setDepartment($department);
+
 
         //Hacemos la validación según las constraints
         $errors = $validator->validate($employee);
@@ -106,7 +118,7 @@ class ApiEmployeesController extends AbstractController
         dump($employee);
 
         return $this->json(
-            $employee,
+            $employeeNormalize->employeeNormalize($employee),
             Response::HTTP_CREATED,
             [
                 'Location' => $this->generateUrl(
