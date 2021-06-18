@@ -12,7 +12,8 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Edad</th>
-                <th>Localidad</th>            
+                <th>Localidad</th> 
+                <th>Departamento</th>            
             </tr>
         </thead>
         <tbody>
@@ -21,6 +22,7 @@
                 <td><a href="{{ path('default_show', {id: id}) }}">{{person.email}}</a></td>
                 <td>{{person.age}}</td>
                 <td>{{person.city}}</td>
+                <td>{{person.department}}</td>
             </tr>
         </tbody>
     </table>
